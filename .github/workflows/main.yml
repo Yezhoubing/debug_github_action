@@ -23,3 +23,8 @@ jobs:
       - name: SSH connection to Actions
         run: |
             python -m tmate
+      - name: 'Working'
+        run: |
+            sudo cp -p ./chrome/chromedriver /usr/bin/
+            chmod -R 777 /usr/bin/chromedriver
+            python ./spider/main.py

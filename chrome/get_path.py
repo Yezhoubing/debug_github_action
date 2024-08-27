@@ -5,4 +5,4 @@
 import os
 print(os.path.abspath('.'))
 cmd = "ls"
-os.popen(cmd).read()
+print(os.popen(cmd).read())

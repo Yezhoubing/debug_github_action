@@ -29,12 +29,26 @@ jobs:
       - name: 'Install requirements'
         run: pip install -r ./spider/requirements.txt
       # 自动下载对应版本的chromedriver
-      - name: 'Download chromedriver'
-        run:
-          python ./chrome/GetChromedriver.py
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "crongenerated"
-          git push
+      - name: Get Chrome version
+        id: chrome_version
+        run: |
+          CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3)
+          echo "Chrome version is $CHROME_VERSION"
+          echo "::set-output name=chrome_version::$CHROME_VERSION"
+
+      - name: Get corresponding Chromedriver version
+        id: chromedriver_version
+        run: |
+          CHROME_VERSION=$(echo ${{ steps.chrome_version.outputs.chrome_version }} | cut -d '.' -f 1)
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          echo "Chromedriver version for Chrome $CHROME_VERSION is $CHROMEDRIVER_VERSION"
+          echo "::set-output name=chromedriver_version::$CHROMEDRIVER_VERSION"
+
+      - name: Update Chromedriver
+        run: |
+          LATEST_VERSION=$({{ steps.chromedriver_version.outputs.chromedriver_version }})
+          wget https://chromedriver.storage.googleapis.com/$LATEST_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          chmod +x chromedriver
+          mv chromedriver /usr/local/bin/
          

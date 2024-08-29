@@ -1,54 +1,25 @@
-name: selenium
-
-# Controls when the action will run. 
+name: Remote-SSH
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-   push:
-
-  # Allows you to run this workflow manually from the Actions tab
-#    workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  watch:
+    types: started
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  SSH:
+    name: Run on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.8]
+        os: [ubuntu-latest]
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      # Runs a single command using the runners shell
-      - name: 'Set up Python'
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
-           python-version: 3.8
-      - name: 'Install requirements'
-        run: pip install -r ./spider/requirements.txt
-      # 自动下载对应版本的chromedriver
-      - name: Get Chrome version
-        id: chrome_version
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
         run: |
-          CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3)
-          echo "Chrome version is $CHROME_VERSION"
-          echo "::set-output name=chrome_version::$CHROME_VERSION"
-
-      - name: Get corresponding Chromedriver version
-        id: chromedriver_version
+          python -m pip install --upgrade pip
+          python -m pip install -U tmate
+      - name: SSH connection to Actions
         run: |
-          CHROME_VERSION=$(echo ${{ steps.chrome_version.outputs.chrome_version }} | cut -d '.' -f 1)
-          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-          echo "Chromedriver version for Chrome $CHROME_VERSION is $CHROMEDRIVER_VERSION"
-          echo "::set-output name=chromedriver_version::$CHROMEDRIVER_VERSION"
-
-      - name: Update Chromedriver
-        run: |
-          LATEST_VERSION=$({{ steps.chromedriver_version.outputs.chromedriver_version }})
-          wget https://chromedriver.storage.googleapis.com/$LATEST_VERSION/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          chmod +x chromedriver
-          mv chromedriver /usr/local/bin/
-         
+            python -m tmate

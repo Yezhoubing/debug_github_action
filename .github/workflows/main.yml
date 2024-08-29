@@ -27,7 +27,6 @@ jobs:
         with:
            python-version: 3.8
       
-      - name: 'Working'
       # 自动下载对应版本的chromedriver
       - name: 'Download chromedriver'
         run:

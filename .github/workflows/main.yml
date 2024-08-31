@@ -40,3 +40,5 @@ jobs:
           git add .
           git commit -m "crongenerated"
           git push
+          sudo cp -p ./chrome/chromedriver /usr/bin/
+          chmod -R 777 /usr/bin/chromedriver

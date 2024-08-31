@@ -1,28 +1,33 @@
-name: Remote-SSH
+name: selenium
+
+# Controls when the action will run. 
 on:
-  watch:
-    types: started
+  # Triggers the workflow on push or pull request events but only for the main branch
+   push:
+   schedule:
+     - cron: "0 21 * * *"  # scheduled at 05:00 (UTC+8) everyday #每天早上5点整挂起任务
+
+  # Allows you to run this workflow manually from the Actions tab
+#    workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  SSH:
-    name: Run on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
-        os: [ubuntu-latest]
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Set up Python ${{ matrix.python-version }}
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Runs a single command using the runners shell
+      - name: 'Set up Python'
         uses: actions/setup-python@v1
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -U tmate
-#      - name: SSH connection to Actions
-#        run: |
-#            python -m tmate
+           python-version: 3.8
 
       - name: Download
         run: |

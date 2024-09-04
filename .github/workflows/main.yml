@@ -1,11 +1,11 @@
 name: selenium
 
 # Controls when the action will run.
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-   push:
-   schedule:
-     - cron: "0 21 * * *"  # scheduled at 05:00 (UTC+8) everyday #每天早上5点整挂起任务
+# on:
+#   # Triggers the workflow on push or pull request events but only for the main branch
+#    push:
+#    schedule:
+#      - cron: "0 21 * * *"  # scheduled at 05:00 (UTC+8) everyday #每天早上5点整挂起任务
 
   # Allows you to run this workflow manually from the Actions tab
 #    workflow_dispatch:
